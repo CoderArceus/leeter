@@ -1,0 +1,5 @@
+[
+  { "key": "ctrl+shift+r", "command": "workbench.action.tasks.runTask", "args": "LeetCode: Run" },
+  { "key": "ctrl+shift+d", "command": "workbench.action.tasks.runTask", "args": "LeetCode: Debug" },
+  { "key": "ctrl+shift+v", "command": "workbench.action.tasks.runTask", "args": "LeetCode: Paste to input.txt" }
+]

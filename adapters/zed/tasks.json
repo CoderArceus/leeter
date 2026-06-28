@@ -1,0 +1,77 @@
+[
+  {
+    "label": "LeetCode: Run",
+    "command": "python3",
+    "args": [
+      "cli/leeter.py",
+      "run",
+      "--problem",
+      "$ZED_DIRNAME"
+    ],
+    "allow_concurrent_tasks": false
+  },
+  {
+    "label": "LeetCode: Debug",
+    "command": "python3",
+    "args": [
+      "cli/leeter.py",
+      "debug",
+      "--problem",
+      "$ZED_DIRNAME"
+    ],
+    "allow_concurrent_tasks": false
+  },
+  {
+    "label": "LeetCode: Bench",
+    "command": "python3",
+    "args": [
+      "cli/leeter.py",
+      "bench",
+      "--problem",
+      "$ZED_DIRNAME"
+    ],
+    "allow_concurrent_tasks": false
+  },
+  {
+    "label": "LeetCode: Clean",
+    "command": "python3",
+    "args": [
+      "cli/leeter.py",
+      "clean",
+      "--problem",
+      "$ZED_DIRNAME"
+    ],
+    "allow_concurrent_tasks": false
+  },
+  {
+    "label": "LeetCode: Replay",
+    "command": "python3",
+    "args": [
+      "cli/leeter.py",
+      "replay",
+      "--problem",
+      "$ZED_DIRNAME"
+    ],
+    "allow_concurrent_tasks": false
+  },
+  {
+    "label": "LeetCode: Stress Test",
+    "command": "python3",
+    "args": [
+      "cli/leeter.py",
+      "stress",
+      "--problem",
+      "$ZED_DIRNAME"
+    ],
+    "allow_concurrent_tasks": false
+  },
+  {
+    "label": "LeetCode: Session",
+    "command": "python3",
+    "args": [
+      "cli/leeter.py",
+      "session"
+    ],
+    "allow_concurrent_tasks": false
+  }
+]
