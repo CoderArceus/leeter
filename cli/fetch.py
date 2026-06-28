@@ -135,6 +135,7 @@ def cmd_fetch(args):
     from cli.output import renderer
     from cli.scaffold import scaffold_problem
     from cli.analyzer import run_pipeline_unified
+    from cli.setup import maybe_bootstrap_zed_tasks
     frontend_id = args.id
     renderer.print(f"Resolving title slug for ID {frontend_id}...")
     try:
@@ -169,6 +170,9 @@ def cmd_fetch(args):
         }
         
         renderer.emit_success("fetch", p_data, {"folder": folder})
+        
+        # Auto-bootstrap Zed tasks if applicable
+        maybe_bootstrap_zed_tasks(os.getcwd())
         
     except Exception as e:
         renderer.emit_error("fetch", None, "network", str(e), exit_code=5)
