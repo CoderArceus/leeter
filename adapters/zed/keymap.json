@@ -1,0 +1,37 @@
+// Optional keybindings for Zed. Run `leeter setup zed --keybindings` to apply.\n[
+    {
+        "context": "Workspace",
+        "bindings": {
+            "ctrl-shift-r": [
+                "task::Spawn",
+                {
+                    "task_name": "Leeter: Run"
+                }
+            ],
+            "ctrl-shift-d": [
+                "task::Spawn",
+                {
+                    "task_name": "Leeter: Debug"
+                }
+            ],
+            "ctrl-shift-b": [
+                "task::Spawn",
+                {
+                    "task_name": "Leeter: Bench"
+                }
+            ],
+            "ctrl-shift-t": [
+                "task::Spawn",
+                {
+                    "task_name": "Leeter: Stress"
+                }
+            ],
+            "ctrl-shift-p": [
+                "task::Spawn",
+                {
+                    "task_name": "Leeter: Replay"
+                }
+            ]
+        }
+    }
+]

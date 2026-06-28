@@ -1,77 +1,67 @@
-[
-  {
-    "label": "LeetCode: Run",
-    "command": "python3",
-    "args": [
-      "cli/leeter.py",
-      "run",
-      "--problem",
-      "$ZED_DIRNAME"
-    ],
-    "allow_concurrent_tasks": false
-  },
-  {
-    "label": "LeetCode: Debug",
-    "command": "python3",
-    "args": [
-      "cli/leeter.py",
-      "debug",
-      "--problem",
-      "$ZED_DIRNAME"
-    ],
-    "allow_concurrent_tasks": false
-  },
-  {
-    "label": "LeetCode: Bench",
-    "command": "python3",
-    "args": [
-      "cli/leeter.py",
-      "bench",
-      "--problem",
-      "$ZED_DIRNAME"
-    ],
-    "allow_concurrent_tasks": false
-  },
-  {
-    "label": "LeetCode: Clean",
-    "command": "python3",
-    "args": [
-      "cli/leeter.py",
-      "clean",
-      "--problem",
-      "$ZED_DIRNAME"
-    ],
-    "allow_concurrent_tasks": false
-  },
-  {
-    "label": "LeetCode: Replay",
-    "command": "python3",
-    "args": [
-      "cli/leeter.py",
-      "replay",
-      "--problem",
-      "$ZED_DIRNAME"
-    ],
-    "allow_concurrent_tasks": false
-  },
-  {
-    "label": "LeetCode: Stress Test",
-    "command": "python3",
-    "args": [
-      "cli/leeter.py",
-      "stress",
-      "--problem",
-      "$ZED_DIRNAME"
-    ],
-    "allow_concurrent_tasks": false
-  },
-  {
-    "label": "LeetCode: Session",
-    "command": "python3",
-    "args": [
-      "cli/leeter.py",
-      "session"
-    ],
-    "allow_concurrent_tasks": false
-  }
+// AUTO-GENERATED: DO NOT EDIT MANUALLY.\n// Run `leeter setup zed` to generate this for your local workspace.\n[
+    {
+        "id": "run",
+        "label": "Leeter: Run",
+        "command": "python3 /Users/aryan/leeter/cli/leeter.py run",
+        "cwd": "$ZED_DIRNAME",
+        "reveal": "always",
+        "use_new_terminal": false,
+        "allow_concurrent_runs": false
+    },
+    {
+        "id": "debug",
+        "label": "Leeter: Debug",
+        "command": "python3 /Users/aryan/leeter/cli/leeter.py debug",
+        "cwd": "$ZED_DIRNAME",
+        "reveal": "always",
+        "use_new_terminal": true
+    },
+    {
+        "id": "bench",
+        "label": "Leeter: Bench",
+        "command": "python3 /Users/aryan/leeter/cli/leeter.py bench --iters 500",
+        "cwd": "$ZED_DIRNAME",
+        "reveal": "always",
+        "use_new_terminal": false
+    },
+    {
+        "id": "stress",
+        "label": "Leeter: Stress",
+        "command": "python3 /Users/aryan/leeter/cli/leeter.py stress --iters 200",
+        "cwd": "$ZED_DIRNAME",
+        "reveal": "always",
+        "use_new_terminal": false
+    },
+    {
+        "id": "replay",
+        "label": "Leeter: Replay",
+        "command": "python3 /Users/aryan/leeter/cli/leeter.py replay",
+        "cwd": "$ZED_DIRNAME",
+        "reveal": "always",
+        "use_new_terminal": true
+    },
+    {
+        "id": "fetch",
+        "label": "Leeter: Fetch Problem",
+        "command": "python3 /Users/aryan/leeter/cli/leeter.py fetch ${ZED_CUSTOM_PROBLEM_ID:0}",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "reveal": "always",
+        "use_new_terminal": true
+    },
+    {
+        "id": "session",
+        "label": "Leeter: Session",
+        "command": "python3 /Users/aryan/leeter/cli/leeter.py session",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "reveal": "always",
+        "use_new_terminal": false
+    },
+    {
+        "id": "stats",
+        "label": "Leeter: Stats",
+        "command": "python3 /Users/aryan/leeter/cli/leeter.py stats",
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "reveal": "always",
+        "use_new_terminal": false
+    }
 ]

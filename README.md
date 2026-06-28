@@ -91,5 +91,5 @@ Leeter includes a master header `lc.h` that is automatically included in all dri
 
 Leeter supports multiple IDEs via the `adapters/` folder. You can configure your editor to run Leeter tasks directly via keyboard shortcuts.
 - **VSCode**: Copy `adapters/vscode/tasks.json` and `keybindings.json` to your `.vscode/` folder.
-- **Zed**: Copy `adapters/zed/tasks.json` to your `.zed/` folder.
+- **Zed**: Run `leeter setup zed` (and optionally `--keybindings`) to automatically generate your local configuration.
 - **Neovim / Emacs**: Check the respective adapter folders for integration scripts.
