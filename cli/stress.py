@@ -109,12 +109,16 @@ def cmd_stress(args):
         # Run sol
         try:
             sol_res = subprocess.run([os.path.join(build_dir, "sol.out")], input=test_case, capture_output=True, text=True, timeout=args.timeout or 2)
+            if sol_res.returncode != 0:
+                renderer.emit_error("stress", problem_data, "runtime", f"Solution crashed (exit code {sol_res.returncode}) with seed {seed}", f"Input:\n{test_case}\nStderr:\n{sol_res.stderr}", exit_code=3)
         except subprocess.TimeoutExpired:
             renderer.emit_error("stress", problem_data, "runtime", f"Solution Timeout! (seed={seed})", f"Input:\n{test_case}", exit_code=4)
             
         # Run brute
         try:
             brute_res = subprocess.run([os.path.join(build_dir, "brute.out")], input=test_case, capture_output=True, text=True, timeout=args.timeout or 2)
+            if brute_res.returncode != 0:
+                renderer.emit_error("stress", problem_data, "runtime", f"Brute crashed (exit code {brute_res.returncode}) with seed {seed}", f"Input:\n{test_case}\nStderr:\n{brute_res.stderr}", exit_code=3)
         except subprocess.TimeoutExpired:
             renderer.emit_error("stress", problem_data, "runtime", f"Brute Timeout! (seed={seed})", f"Input:\n{test_case}", exit_code=4)
             
