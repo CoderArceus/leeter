@@ -62,3 +62,6 @@ problems/*/build/
 # Ignore all user problem solutions
 problems/*
 !problems/.gitkeep
+
+# Editor settings
+.zed/
