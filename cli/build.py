@@ -119,6 +119,10 @@ def execute_with_timeout(problem_dir: str, timeout_sec: int = 5) -> bool:
     bin_path = os.path.join(problem_dir, 'build', 'solution')
     input_path = os.path.join(problem_dir, 'input.txt')
     
+    if not os.path.exists(bin_path):
+        renderer.emit_error("run", None, "compile", f"Binary not found at {bin_path}. Try running without --no-compile, or delete the build/ directory to force a rebuild.", exit_code=5)
+        return False
+        
     if not os.path.exists(input_path):
         renderer.print("No input.txt found. Creating an empty one.")
         open(input_path, 'w').close()
@@ -197,6 +201,10 @@ def execute_trace(problem_dir: str):
     bin_path = os.path.join(problem_dir, 'build', 'solution_trace')
     input_file = os.path.join(problem_dir, 'input.txt')
     
+    if not os.path.exists(bin_path):
+        print(f"Binary not found at {bin_path}. Try running without --no-compile, or delete the build/ directory to force a rebuild.")
+        return
+        
     if not os.path.exists(input_file):
         print("No input.txt found")
         return
@@ -256,6 +264,10 @@ def execute_debug(problem_dir: str, input_file: str = "input.txt"):
     bin_path = os.path.join(problem_dir, 'build', 'solution_debug')
     input_path = os.path.join(problem_dir, input_file)
     
+    if not os.path.exists(bin_path):
+        renderer.error("Execution failed", f"Binary not found at {bin_path}. Try running without --no-compile, or delete the build/ directory to force a rebuild.")
+        return False
+        
     env = os.environ.copy()
     env["ASAN_OPTIONS"] = "detect_leaks=1"
     
