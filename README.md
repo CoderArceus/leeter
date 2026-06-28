@@ -82,6 +82,15 @@ leeter replay
 
 Using `leeter replay` allows you to **step through these operations one by one manually** by pressing `Enter`. After each operation, Leeter will pause execution and print the exact method that was called, its arguments, and the result. This gives you complete visibility into how your class's internal state is mutating over time, making it much easier to isolate where things go wrong!
 
+**📸 The `SNAPSHOT()` Macro:**
+You can manually pause the replay and inspect variables at any point in your code (even in standard algorithms) by using the `SNAPSHOT(var1, var2)` macro.
+```cpp
+for (int i = 0; i < n; i++) {
+    sum += nums[i];
+    SNAPSHOT(i, sum); // Replay will pause here and show the values!
+}
+```
+
 ### 📊 Session and Stats
 - `leeter session`: View your current daily streak, goals, and recent activity.
 - `leeter stats`: View overall progress by difficulty and topic tags.
@@ -93,6 +102,7 @@ Using `leeter replay` allows you to **step through these operations one by one m
 Leeter includes a master header `lc.h` that is automatically included in all drivers. It provides:
 - Data structure definitions matching LeetCode exactly (`TreeNode`, `ListNode`).
 - Built-in type parsers and printers.
+- **Visual Time Travel**: The `SNAPSHOT(...)` macro for pausing the `replay` command at specific lines to inspect variables.
 - Debugging utilities (`dbg`, `trace`, `watch`).
 - Visual assertions (`ASSERT_EQ` with diffing).
 - Random generators (`randomVector`, `randomTree`, etc.) used internally for stress testing.
