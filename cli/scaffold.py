@@ -6,7 +6,7 @@ import re
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from cli.analyzer import run_pipeline_unified
+from cli.analyzer import run_pipeline_unified, resolve_need_input
 from cli.models import NeedInput, RunnerKind
 
 def generate_input_txt(example_testcases):
@@ -58,36 +58,7 @@ def scaffold_problem(data, force=False):
     
     for sig in signals:
         if isinstance(sig, NeedInput):
-            # Prompt user if interactive
-            from cli.output import renderer
-            import sys
-            
-            choice = ""
-            if not renderer.use_json and not renderer.quiet and sys.stdin.isatty():
-                print(f"Ambiguous Runner Detection: {sig.prompt}")
-                try:
-                    choice = input("> ").strip()
-                except (EOFError, KeyboardInterrupt):
-                    print("\n[Warning] Interactive prompt failed. Defaulting...")
-                    choice = ""
-            else:
-                renderer.print("[Warning] Ambiguous runner detected in non-interactive mode. Defaulting...")
-            
-            if "Multiple methods detected" in sig.prompt:
-                try:
-                    idx = int(choice) - 1
-                    ir.function = ir.candidate_functions[idx]
-                except:
-                    ir.function = ir.candidate_functions[-1]
-                ir.runner = RunnerKind.FUNCTION
-                ir.capabilities = ["run", "trace", "multiple_cases", "benchmark", "stress_test"]
-            else:
-                if choice == "1":
-                    ir.runner = RunnerKind.FUNCTION
-                    ir.capabilities = ["run", "trace", "multiple_cases", "benchmark", "stress_test"]
-                else:
-                    ir.runner = RunnerKind.STATEFUL_CLASS
-                    ir.capabilities = ["run", "trace", "replay", "multiple_cases"]
+            ir = resolve_need_input(ir, sig)
     
     # 3. Write problem.json
     problem_json_path = os.path.join(folder_path, "problem.json")

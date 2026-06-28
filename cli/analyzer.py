@@ -203,6 +203,59 @@ class CapabilityAnalyzer:
         ir.capabilities = caps
         return ir, Continue()
 
+def resolve_need_input(ir: ProblemIR, sig: NeedInput) -> ProblemIR:
+    """
+    Shared handler for a NeedInput signal coming out of the pipeline.
+    Prompts interactively when possible; otherwise falls back to a
+    deterministic default and warns, so non-interactive invocations
+    (CI, --json, --quiet) never hang on stdin.
+
+    Used by both `leeter fetch`/`new` (scaffold.py) and `leeter run`
+    (run.py) so the two paths can't drift out of sync.
+    """
+    from cli.output import renderer
+
+    choice = ""
+    if not renderer.use_json and not renderer.quiet and sys.stdin.isatty():
+        print(f"Ambiguous Runner Detection: {sig.prompt}")
+        try:
+            choice = input("> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n[Warning] Interactive prompt failed. Defaulting...")
+            choice = ""
+    else:
+        renderer.print("[Warning] Ambiguous runner detected in non-interactive mode. Defaulting...")
+
+    if "Multiple methods detected" in sig.prompt:
+        try:
+            idx = int(choice) - 1
+            ir.function = ir.candidate_functions[idx]
+        except (ValueError, IndexError):
+            ir.function = ir.candidate_functions[-1]
+        ir.runner = RunnerKind.FUNCTION
+        ir.capabilities = ["run", "trace", "multiple_cases", "benchmark", "stress_test"]
+    else:
+        if choice == "1":
+            ir.runner = RunnerKind.FUNCTION
+            ir.capabilities = ["run", "trace", "multiple_cases", "benchmark", "stress_test"]
+        else:
+            ir.runner = RunnerKind.STATEFUL_CLASS
+            ir.capabilities = ["run", "trace", "replay", "multiple_cases"]
+
+    return ir
+
+def resolve_pipeline_signals(ir: ProblemIR, signals: List[PipelineSignal]) -> ProblemIR:
+    """
+    Walks pipeline signals and resolves any NeedInput so callers (run.py,
+    scaffold.py) always end up with a concrete ir.runner, instead of
+    silently discarding the signal and falling through to a generic
+    "runner not implemented" error.
+    """
+    for sig in signals:
+        if isinstance(sig, NeedInput):
+            ir = resolve_need_input(ir, sig)
+    return ir
+
 def run_pipeline(stub: str, mock_input: str = None) -> Tuple[ProblemIR, List[PipelineSignal]]:
     ir = ProblemIR()
     signals = []

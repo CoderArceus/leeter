@@ -2,7 +2,8 @@ import os
 import sys
 import json
 from cli.output import renderer
-from cli.analyzer import run_pipeline_unified
+from cli.analyzer import run_pipeline_unified, resolve_need_input
+from cli.models import NeedInput
 from cli.runners.function import FunctionRunner
 from cli.runners.stateful_class import StatefulClassRunner
 from cli.build import compile_release, execute_with_timeout
@@ -27,13 +28,25 @@ def cmd_run(args):
             existing_data = json.load(f)
             
         # Avoid prompting/overwriting if user already selected the correct function
+        cached_choice_applied = False
         if ir.candidate_functions and existing_data.get("function"):
             fn_name = existing_data["function"].get("name")
             for c in ir.candidate_functions:
                 if c.name == fn_name:
                     ir.function = c
                     ir.runner = "function"
+                    cached_choice_applied = True
                     break
+        
+        # Only fall through to the interactive/fallback resolver if the
+        # cache didn't already pin down a concrete choice above. Without
+        # this, an ambiguous Solution class would re-prompt (or silently
+        # fail, since this call site previously ignored `signals` entirely)
+        # on every single `leeter run`, even after the user already chose.
+        if not cached_choice_applied:
+            for sig in signals:
+                if isinstance(sig, NeedInput):
+                    ir = resolve_need_input(ir, sig)
                     
         ir_dict = ir.to_dict()
         existing_data["function"] = ir_dict.get("function")
@@ -42,6 +55,9 @@ def cmd_run(args):
         with open(pjson_path, 'w') as f:
             json.dump(existing_data, f, indent=2)
     else:
+        for sig in signals:
+            if isinstance(sig, NeedInput):
+                ir = resolve_need_input(ir, sig)
         with open(pjson_path, 'w') as f:
             json.dump(ir.to_dict(), f, indent=2)
         
