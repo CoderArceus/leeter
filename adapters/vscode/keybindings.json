@@ -1,5 +1,27 @@
-[
-  { "key": "ctrl+shift+r", "command": "workbench.action.tasks.runTask", "args": "LeetCode: Run" },
-  { "key": "ctrl+shift+d", "command": "workbench.action.tasks.runTask", "args": "LeetCode: Debug" },
-  { "key": "ctrl+shift+v", "command": "workbench.action.tasks.runTask", "args": "LeetCode: Paste to input.txt" }
+// Optional keybindings for VSCode. Run `leeter setup vscode --keybindings` to apply globally.\n[
+    {
+        "key": "ctrl+shift+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Leeter: Run"
+    },
+    {
+        "key": "ctrl+shift+d",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Leeter: Debug"
+    },
+    {
+        "key": "ctrl+shift+b",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Leeter: Bench"
+    },
+    {
+        "key": "ctrl+shift+t",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Leeter: Stress"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Leeter: Replay"
+    }
 ]

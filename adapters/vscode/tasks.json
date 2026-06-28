@@ -1,115 +1,118 @@
-{
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "LeetCode: Run",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py run --problem ${fileDirname}",
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "LeetCode: Debug",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py debug --problem ${fileDirname}",
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "LeetCode: Generate Driver",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py gen --problem ${fileDirname}",
-      "group": "build",
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "LeetCode: Fetch",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py fetch ${input:problemId}",
-      "group": "build",
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "LeetCode: Bench",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py bench --problem ${fileDirname}",
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "LeetCode: Stress Test",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py stress --problem ${fileDirname}",
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "LeetCode: Paste to input.txt",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py paste --problem ${fileDirname}",
-      "group": "none",
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "LeetCode: Replay",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py replay --problem ${fileDirname}",
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "LeetCode: Clean",
-      "type": "shell",
-      "command": "python3 cli/leetcode.py clean --problem ${fileDirname}",
-      "group": "build",
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    }
-  ],
-  "inputs": [
-    {
-      "id": "problemId",
-      "type": "promptString",
-      "description": "LeetCode problem ID",
-      "default": ""
-    }
-  ]
+// AUTO-GENERATED: DO NOT EDIT MANUALLY.\n// Run `leeter setup vscode` to generate this for your local workspace.\n{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Leeter: Run",
+            "type": "shell",
+            "command": "python3 /Users/aryan/leeter/cli/leeter.py run",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Leeter: Debug",
+            "type": "shell",
+            "command": "python3 /Users/aryan/leeter/cli/leeter.py debug",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Leeter: Bench",
+            "type": "shell",
+            "command": "python3 /Users/aryan/leeter/cli/leeter.py bench --iters 500",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Leeter: Stress",
+            "type": "shell",
+            "command": "python3 /Users/aryan/leeter/cli/leeter.py stress --iters 200",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Leeter: Replay",
+            "type": "shell",
+            "command": "python3 /Users/aryan/leeter/cli/leeter.py replay",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Leeter: Fetch Problem",
+            "type": "shell",
+            "command": "python3 /Users/aryan/leeter/cli/leeter.py fetch ${ZED_CUSTOM_PROBLEM_ID:0}",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Leeter: Session",
+            "type": "shell",
+            "command": "python3 /Users/aryan/leeter/cli/leeter.py session",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Leeter: Stats",
+            "type": "shell",
+            "command": "python3 /Users/aryan/leeter/cli/leeter.py stats",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        }
+    ]
 }

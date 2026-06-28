@@ -24,6 +24,7 @@ from cli.stats import cmd_stats, cmd_search
 from cli.note import cmd_note
 from cli.paste import cmd_paste
 from cli.migrate import cmd_migrate
+from cli.setup import cmd_setup
 
 def resolve_problem_dir(args_problem: str) -> str:
     if args_problem:
@@ -146,6 +147,12 @@ def main():
     clean_parser = subparsers.add_parser("clean", parents=[global_parser], add_help=False)
     clean_parser.add_argument("--all", action="store_true")
     
+    setup_parser = subparsers.add_parser("setup", parents=[global_parser], add_help=False)
+    setup_parser.add_argument("editor", type=str, choices=["zed", "vscode", "neovim", "emacs", "all"])
+    setup_parser.add_argument("--scope", type=str, choices=["project", "global"], default="project")
+    setup_parser.add_argument("--keybindings", action="store_true")
+    setup_parser.add_argument("--dry-run", action="store_true")
+    
     args, unknown = parser.parse_known_args()
     
     if not hasattr(args, 'problem'): args.problem = None
@@ -181,7 +188,6 @@ def main():
         
     if args.command == "run":
         cmd_run(args)
-        cmd_gen(args)
     elif args.command == "new":
         cmd_new(args)
     elif args.command == "auth":
@@ -212,6 +218,8 @@ def main():
         cmd_clean(args)
     elif args.command == "debug":
         cmd_debug(args)
+    elif args.command == "setup":
+        cmd_setup(args)
 
 if __name__ == "__main__":
     main()
