@@ -66,21 +66,31 @@ class StubAnalyzer:
             if m:
                 body = m.group(1)
                 body = body.replace('public:', '').replace('private:', '').replace('protected:', '')
-                # exclude constructors/destructors by looking for return type
-                for line in body.split('}'):
-                    sig_m = re.search(r'([a-zA-Z0-9_<>:\*]+(?:(?:\s+|&|\*)[a-zA-Z0-9_<>:\*]+)*)\s+([a-zA-Z0-9_]+)\s*\((.*?)\)', line)
-                    if sig_m:
-                        ret_type_raw = sig_m.group(1)
-                        name = sig_m.group(2)
-                        args_raw = sig_m.group(3)
-                        
-                        ret_type = parse_cpp_type(ret_type_raw)
-                        ir.function = FunctionStruct(
-                            name=name,
-                            return_type=ret_type,
-                            parameters=parse_params(args_raw)
-                        )
-                        break
+                
+                methods = []
+                # Use finditer with DOTALL to support multi-line signatures
+                # We look for: return_type name ( args ) {
+                pattern = r'([a-zA-Z0-9_<>:\*]+(?:(?:\s+|&|\*)[a-zA-Z0-9_<>:\*]+)*)\s+([a-zA-Z0-9_]+)\s*\((.*?)\)\s*(?:const)?\s*\{'
+                for sig_m in re.finditer(pattern, body, re.DOTALL):
+                    ret_type_raw = sig_m.group(1)
+                    name = sig_m.group(2)
+                    args_raw = sig_m.group(3)
+                    
+                    # skip typical constructors
+                    if name == "Solution": continue
+                    
+                    ret_type = parse_cpp_type(ret_type_raw)
+                    methods.append(FunctionStruct(
+                        name=name,
+                        return_type=ret_type,
+                        parameters=parse_params(args_raw.replace('\n', ' '))
+                    ))
+                
+                if methods:
+                    ir.candidate_functions = methods
+                    # Default to the last one (often the primary method if helpers are defined first)
+                    ir.function = methods[-1]
+
             return ir, Continue()
             
         # InteractiveRunner (extends something)
@@ -133,6 +143,10 @@ class StubAnalyzer:
 class RunnerResolver:
     def analyze(self, ir: ProblemIR) -> Tuple[ProblemIR, PipelineSignal]:
         if ir.function:
+            if len(ir.candidate_functions) > 1:
+                options = "\n".join([f"[{i+1}] {m.name}" for i, m in enumerate(ir.candidate_functions)])
+                return ir, NeedInput(f"Multiple methods detected in Solution class:\n{options}\nEnter the number for the target entrypoint:")
+
             ir.runner = RunnerKind.FUNCTION
             ir.runner_detection = DetectionResult(candidate=RunnerKind.FUNCTION, evidence=["Solution class present"])
             return ir, Continue()

@@ -66,60 +66,59 @@ def main():
     global_parser.add_argument("--quiet", action="store_true", help="Suppress all output except errors and results", default=argparse.SUPPRESS)
     global_parser.add_argument("--verbose", action="store_true", help="Show full pipeline stage output", default=argparse.SUPPRESS)
     global_parser.add_argument("--version", action="store_true", help="Print framework version and exit", default=argparse.SUPPRESS)
-    global_parser.add_argument("--help", action="store_true", help="Print help for the current command and exit", default=argparse.SUPPRESS)
     
-    parser = argparse.ArgumentParser(description="Leeter CLI", parents=[global_parser], add_help=False)
+    parser = argparse.ArgumentParser(description="Leeter CLI", parents=[global_parser])
     subparsers = parser.add_subparsers(dest="command")
     
-    fetch_parser = subparsers.add_parser("fetch", parents=[global_parser], add_help=False)
+    fetch_parser = subparsers.add_parser("fetch", parents=[global_parser])
     fetch_parser.add_argument("id", type=str)
     fetch_parser.add_argument("--lang", type=str, default="cpp")
     fetch_parser.add_argument("--force", action="store_true")
     fetch_parser.add_argument("--no-analyze", action="store_true")
     
-    run_parser = subparsers.add_parser("run", parents=[global_parser], add_help=False)
+    run_parser = subparsers.add_parser("run", parents=[global_parser])
     run_parser.add_argument("--case", type=int)
     run_parser.add_argument("--no-compile", action="store_true")
     run_parser.add_argument("--timeout", type=int, default=5)
     run_parser.add_argument("--input", type=str, default="input.txt")
     
-    debug_parser = subparsers.add_parser("debug", parents=[global_parser], add_help=False)
+    debug_parser = subparsers.add_parser("debug", parents=[global_parser])
     debug_parser.add_argument("--no-sanitize", action="store_true")
     debug_parser.add_argument("--input", type=str, default="input.txt")
     
-    new_parser = subparsers.add_parser("new", parents=[global_parser], add_help=False)
+    new_parser = subparsers.add_parser("new", parents=[global_parser])
     new_parser.add_argument("name", type=str, nargs="?")
     new_parser.add_argument("--difficulty", type=str, choices=["easy", "medium", "hard"])
     new_parser.add_argument("--runner", type=str, choices=["function", "stateful", "interactive"])
     new_parser.add_argument("--id", type=int)
     
-    replay_parser = subparsers.add_parser("replay", parents=[global_parser], add_help=False)
+    replay_parser = subparsers.add_parser("replay", parents=[global_parser])
     replay_parser.add_argument("--case", type=int, default=0)
     replay_parser.add_argument("--op", type=int, default=0)
     replay_parser.add_argument("--raw", action="store_true")
     
-    bench_parser = subparsers.add_parser("bench", parents=[global_parser], add_help=False)
+    bench_parser = subparsers.add_parser("bench", parents=[global_parser])
     bench_parser.add_argument("--iters", type=int, default=1000)
     bench_parser.add_argument("--warmup", type=int, default=10)
     bench_parser.add_argument("--compare", action="store_true")
     bench_parser.add_argument("--input", type=str, default="input.txt")
     
-    stress_parser = subparsers.add_parser("stress", parents=[global_parser], add_help=False)
+    stress_parser = subparsers.add_parser("stress", parents=[global_parser])
     stress_parser.add_argument("--iters", type=int, default=1000)
     stress_parser.add_argument("--seed", type=int)
     stress_parser.add_argument("--timeout", type=int, default=2)
     
-    subparsers.add_parser("paste", parents=[global_parser], add_help=False)
+    subparsers.add_parser("paste", parents=[global_parser])
     
-    open_parser = subparsers.add_parser("open", parents=[global_parser], add_help=False)
+    open_parser = subparsers.add_parser("open", parents=[global_parser])
     open_parser.add_argument("id", type=str, nargs="?")
     open_parser.add_argument("--browser-only", action="store_true")
     open_parser.add_argument("--editor-only", action="store_true")
     open_parser.add_argument("--editor", type=str)
     
-    subparsers.add_parser("note", parents=[global_parser], add_help=False)
+    subparsers.add_parser("note", parents=[global_parser])
     
-    search_parser = subparsers.add_parser("search", parents=[global_parser], add_help=False)
+    search_parser = subparsers.add_parser("search", parents=[global_parser])
     search_parser.add_argument("query", type=str, nargs="?", default="")
     search_parser.add_argument("--tag", type=str)
     search_parser.add_argument("--difficulty", type=str, choices=["easy", "medium", "hard"])
@@ -127,33 +126,33 @@ def main():
     search_parser.add_argument("--unsolved", action="store_true")
     search_parser.add_argument("--limit", type=int, default=20)
     
-    stats_parser = subparsers.add_parser("stats", parents=[global_parser], add_help=False)
+    stats_parser = subparsers.add_parser("stats", parents=[global_parser])
     stats_parser.add_argument("--by-tag", action="store_true")
     stats_parser.add_argument("--by-difficulty", action="store_true", default=True)
     stats_parser.add_argument("--since", type=str)
     
-    session_parser = subparsers.add_parser("session", parents=[global_parser], add_help=False)
+    session_parser = subparsers.add_parser("session", parents=[global_parser])
     session_parser.add_argument("--goal", type=str)
     session_parser.add_argument("--reset", action="store_true")
     
-    auth_parser = subparsers.add_parser("auth", parents=[global_parser], add_help=False)
+    auth_parser = subparsers.add_parser("auth", parents=[global_parser])
     auth_parser.add_argument("cookie", type=str, nargs="?")
     auth_parser.add_argument("--check", action="store_true")
     
-    migrate_parser = subparsers.add_parser("migrate", parents=[global_parser], add_help=False)
+    migrate_parser = subparsers.add_parser("migrate", parents=[global_parser])
     migrate_parser.add_argument("--apply", action="store_true")
     migrate_parser.add_argument("--from", dest="from_ver", type=int)
     
-    clean_parser = subparsers.add_parser("clean", parents=[global_parser], add_help=False)
+    clean_parser = subparsers.add_parser("clean", parents=[global_parser])
     clean_parser.add_argument("--all", action="store_true")
     
-    setup_parser = subparsers.add_parser("setup", parents=[global_parser], add_help=False)
+    setup_parser = subparsers.add_parser("setup", parents=[global_parser])
     setup_parser.add_argument("editor", type=str, choices=["zed", "vscode", "neovim", "emacs", "all"])
     setup_parser.add_argument("--scope", type=str, choices=["project", "global"], default="project")
     setup_parser.add_argument("--keybindings", action="store_true")
     setup_parser.add_argument("--dry-run", action="store_true")
     
-    args, unknown = parser.parse_known_args()
+    args = parser.parse_args()
     
     if not hasattr(args, 'problem'): args.problem = None
     if not hasattr(args, 'json'): args.json = False

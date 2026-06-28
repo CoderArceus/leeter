@@ -24,10 +24,14 @@
 #include <sstream>
 template<typename T>
 std::string to_json_string(const T& val) {
+    struct StdoutRedirect {
+        std::streambuf* old;
+        StdoutRedirect(std::streambuf* buf) { old = std::cout.rdbuf(buf); }
+        ~StdoutRedirect() { std::cout.rdbuf(old); }
+    };
     std::stringstream ss;
-    std::streambuf* old_cout = std::cout.rdbuf(ss.rdbuf());
+    StdoutRedirect redir(ss.rdbuf());
     print_inline(val);
-    std::cout.rdbuf(old_cout);
     return ss.str();
 }
 

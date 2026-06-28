@@ -115,7 +115,7 @@ def compile_trace(problem_dir: str) -> bool:
         print(f"Trace compilation successful ({compile_time:.2f} ms)")
     return result.returncode == 0
 
-def execute_with_timeout(problem_dir: str, timeout_sec: int = 5):
+def execute_with_timeout(problem_dir: str, timeout_sec: int = 5) -> bool:
     bin_path = os.path.join(problem_dir, 'build', 'solution')
     input_path = os.path.join(problem_dir, 'input.txt')
     
@@ -150,6 +150,7 @@ def execute_with_timeout(problem_dir: str, timeout_sec: int = 5):
             
             if result.returncode != 0:
                 renderer.emit_error("run", p_data, "runtime", f"Runtime error (exit code {result.returncode})", getattr(result, 'stderr', ''), exit_code=3)
+                return False
             
             size_kb = os.path.getsize(bin_path) / 1024 if os.path.exists(bin_path) else 0
             
@@ -186,8 +187,11 @@ def execute_with_timeout(problem_dir: str, timeout_sec: int = 5):
                     renderer.print(f"  binary size   :  {size_kb:.2f} KB")
                 renderer.print("────────────────────────────────")
             
+            return True
+            
     except subprocess.TimeoutExpired:
         renderer.emit_error("run", p_data, "runtime", "Time Limit Exceeded", f"> {timeout_sec}s", exit_code=4)
+        return False
 
 def execute_trace(problem_dir: str):
     bin_path = os.path.join(problem_dir, 'build', 'solution_trace')

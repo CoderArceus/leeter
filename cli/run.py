@@ -25,6 +25,16 @@ def cmd_run(args):
     if os.path.exists(pjson_path):
         with open(pjson_path, 'r') as f:
             existing_data = json.load(f)
+            
+        # Avoid prompting/overwriting if user already selected the correct function
+        if ir.candidate_functions and existing_data.get("function"):
+            fn_name = existing_data["function"].get("name")
+            for c in ir.candidate_functions:
+                if c.name == fn_name:
+                    ir.function = c
+                    ir.runner = "function"
+                    break
+                    
         ir_dict = ir.to_dict()
         existing_data["function"] = ir_dict.get("function")
         existing_data["runner"] = ir_dict.get("runner")
@@ -60,6 +70,8 @@ def cmd_run(args):
         success = True
         
     if success:
-        execute_with_timeout(problem_dir, getattr(args, 'timeout', 5))
-        from cli.storage import mark_problem_solved
-        mark_problem_solved(problem_dir)
+        run_success = execute_with_timeout(problem_dir, getattr(args, 'timeout', 5))
+        if run_success:
+            from cli.storage import mark_problem_solved
+            # Note: without expected output, this only verifies it ran without error
+            mark_problem_solved(problem_dir)

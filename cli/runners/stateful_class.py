@@ -85,6 +85,7 @@ class StatefulClassRunner:
                 args_json_str = 'std::string("[") + ' + ' + "," + '.join(m_json) + ' + "]"'
                 
             lines.append(f'                get_trace_logger().method_call("{m.name}", {args_json_str});')
+            lines.append('                if (!obj) { cout << "null"; get_trace_logger().method_return("null"); continue; }')
             
             call_expr = f'obj->{m.name}({", ".join(m_args)})'
             if m.is_void:
