@@ -71,6 +71,7 @@ def compile_release(problem_dir: str) -> bool:
     cmd = [
         "clang++", "-std=c++20", "-O2",
         "-I" + os.path.join(os.path.dirname(os.path.dirname(problem_dir)), "include"),
+        "-I" + problem_dir,
         driver_path,
         "-o", bin_path
     ]
@@ -93,7 +94,7 @@ def compile_release(problem_dir: str) -> bool:
         return False
 
 def compile_trace(problem_dir: str) -> bool:
-    print("Compiling for trace...")
+    renderer.print("Compiling for trace...")
     t0 = time.time()
     
     driver_path = os.path.join(problem_dir, 'build', 'driver.override.cpp')
@@ -105,6 +106,7 @@ def compile_trace(problem_dir: str) -> bool:
         "clang++", "-std=c++20", "-O2",
         "-DTRACE_ENABLED=1",
         "-I" + os.path.join(os.path.dirname(os.path.dirname(problem_dir)), "include"),
+        "-I" + problem_dir,
         driver_path,
         "-o", bin_path
     ]
@@ -112,7 +114,30 @@ def compile_trace(problem_dir: str) -> bool:
     result = subprocess.run(cmd, cwd=problem_dir)
     compile_time = (time.time() - t0) * 1000
     if result.returncode == 0:
-        print(f"Trace compilation successful ({compile_time:.2f} ms)")
+        renderer.print(f"Trace compilation successful ({compile_time:.2f} ms)")
+    return result.returncode == 0
+
+def compile_replay(problem_dir: str) -> bool:
+    renderer.print("Compiling for replay...")
+    t0 = time.time()
+    
+    driver_path = os.path.join(problem_dir, 'build', 'driver.override.cpp')
+    if not os.path.exists(driver_path):
+        driver_path = os.path.join(problem_dir, 'build', 'driver.cpp')
+        
+    bin_path = os.path.join(problem_dir, 'build', 'solution_replay')
+    cmd = [
+        "clang++", "-std=c++20", "-g", "-O0",
+        "-I" + os.path.join(os.path.dirname(os.path.dirname(problem_dir)), "include"),
+        "-I" + problem_dir,
+        driver_path,
+        "-o", bin_path
+    ]
+    
+    result = subprocess.run(cmd, cwd=problem_dir)
+    compile_time = (time.time() - t0) * 1000
+    if result.returncode == 0:
+        renderer.print(f"Replay compilation successful ({compile_time:.2f} ms)")
     return result.returncode == 0
 
 def execute_with_timeout(problem_dir: str, timeout_sec: int = 5) -> bool:
@@ -245,6 +270,7 @@ def compile_debug(problem_dir: str, sanitize: bool = True) -> bool:
     cmd = [
         "clang++", "-std=c++20", "-g", "-O0",
         "-I" + os.path.join(os.path.dirname(os.path.dirname(problem_dir)), "include"),
+        "-I" + problem_dir,
         driver_path,
         "-o", bin_path
     ]

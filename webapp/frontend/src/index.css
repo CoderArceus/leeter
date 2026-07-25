@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer utilities {
+  .syntax-keyword { color: #818cf8; } /* dim blue */
+  .syntax-type { color: #a78bfa; } /* dim purple */
+  .syntax-string { color: #34d399; } /* dim green */
+  .syntax-comment { color: #9ca3af; } /* gray */
+  .syntax-operator { color: #e5e7eb; }
+  .border-base { border-color: #27272A; }
+  
+  .bg-level-1 { background-color: #18181B; }
+  .bg-level-2 { background-color: #27272A; }
+  .border-panel { border-color: #27272A; }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

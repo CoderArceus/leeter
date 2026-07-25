@@ -24,7 +24,7 @@ from cli.stats import cmd_stats, cmd_search
 from cli.note import cmd_note
 from cli.paste import cmd_paste
 from cli.migrate import cmd_migrate
-from cli.setup import cmd_setup
+from cli.ui import cmd_ui
 
 def resolve_problem_dir(args_problem: str) -> str:
     if args_problem:
@@ -75,6 +75,8 @@ def main():
     fetch_parser.add_argument("--lang", type=str, default="cpp")
     fetch_parser.add_argument("--force", action="store_true")
     fetch_parser.add_argument("--no-analyze", action="store_true")
+    
+    ui_parser = subparsers.add_parser("ui", parents=[global_parser], help="Launch the Leeter Web UI")
     
     run_parser = subparsers.add_parser("run", parents=[global_parser])
     run_parser.add_argument("--case", type=int)
@@ -146,12 +148,6 @@ def main():
     clean_parser = subparsers.add_parser("clean", parents=[global_parser])
     clean_parser.add_argument("--all", action="store_true")
     
-    setup_parser = subparsers.add_parser("setup", parents=[global_parser])
-    setup_parser.add_argument("editor", type=str, choices=["zed", "vscode", "neovim", "emacs", "all"])
-    setup_parser.add_argument("--scope", type=str, choices=["project", "global"], default="project")
-    setup_parser.add_argument("--keybindings", action="store_true")
-    setup_parser.add_argument("--dry-run", action="store_true")
-    
     args = parser.parse_args()
     
     if not hasattr(args, 'problem'): args.problem = None
@@ -217,8 +213,8 @@ def main():
         cmd_clean(args)
     elif args.command == "debug":
         cmd_debug(args)
-    elif args.command == "setup":
-        cmd_setup(args)
+    elif args.command == "ui":
+        cmd_ui(args)
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,2 @@
+recursive-include webapp/dist *
+recursive-include include *

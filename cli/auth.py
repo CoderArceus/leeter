@@ -6,6 +6,9 @@ def cmd_auth(args):
     os.makedirs(os.path.expanduser("~/.lc"), exist_ok=True)
     session_file = os.path.expanduser("~/.lc/session.json")
     if getattr(args, 'check', False):
+        if not os.path.exists(session_file):
+            renderer.error("Not authenticated.", "No session file found at ~/.lc/session.json")
+            return
         with open(session_file, 'r') as f:
             data = json.load(f)
             if "cookie" in data:

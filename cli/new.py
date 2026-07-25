@@ -1,4 +1,5 @@
 import os
+import json
 from cli.output import renderer
 
 def cmd_new(args):
@@ -23,5 +24,19 @@ def cmd_new(args):
     input_path = os.path.join(folder_name, "input.txt")
     if not os.path.exists(input_path):
         open(input_path, 'w').close()
-        
+
+    # Create problem.json so the folder is recognized by the rest of the framework
+    pjson_path = os.path.join(folder_name, "problem.json")
+    if not os.path.exists(pjson_path):
+        problem_data = {
+            "id": getattr(args, 'id', 0) or 0,
+            "title": args.name,
+            "difficulty": getattr(args, 'difficulty', 'medium') or 'medium',
+            "runner": getattr(args, 'runner', 'function') or 'function',
+            "solved": False,
+            "framework_version": 2,
+        }
+        with open(pjson_path, 'w') as f:
+            json.dump(problem_data, f, indent=2)
+
     renderer.success(f"Created {folder_name}/")

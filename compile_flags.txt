@@ -1,0 +1,5 @@
+-xc++
+-std=c++17
+-include
+/Users/aryan/leeter/include/lc.h
+-I/Users/aryan/leeter/include

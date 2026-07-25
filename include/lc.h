@@ -18,8 +18,8 @@
 #include "debug.h"
 #include "timer.h"
 #include "assert.h"
-#include "snapshot.h"
 #include "random.h"
+#include "tracker.h"
 
 #include <sstream>
 template<typename T>
@@ -34,7 +34,5 @@ std::string to_json_string(const T& val) {
     print_inline(val);
     return ss.str();
 }
-
-#include "trace.h"
 
 using namespace std;

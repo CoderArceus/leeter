@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Leeter - Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;900&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#e2e2e2",
+                        "surface-container": "#201f1f",
+                        "surface-dim": "#141313",
+                        "outline-variant": "#444748",
+                        "primary-fixed": "#e2e2e2",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#2f3131",
+                        "on-secondary-fixed": "#1a1b22",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "surface-tint": "#c6c6c7",
+                        "background": "#141313",
+                        "on-tertiary-container": "#636565",
+                        "on-secondary-container": "#bcbbc5",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-container": "#636565",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "inverse-primary": "#5d5f5f",
+                        "tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#46464e",
+                        "on-primary": "#2f3131",
+                        "on-primary-fixed-variant": "#454747",
+                        "surface-variant": "#353434",
+                        "surface-container-high": "#2a2a2a",
+                        "error": "#ffb4ab",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container-highest": "#353434",
+                        "outline": "#8e9192",
+                        "secondary-container": "#4a4b53",
+                        "secondary-fixed": "#e3e1ec",
+                        "on-error": "#690005",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "secondary": "#c6c5cf",
+                        "inverse-surface": "#e5e2e1",
+                        "primary-container": "#e2e2e2",
+                        "on-primary-fixed": "#1a1c1c",
+                        "surface-bright": "#3a3939",
+                        "surface": "#141313",
+                        "tertiary-fixed": "#e2e2e2",
+                        "primary": "#ffffff",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-surface-variant": "#c4c7c8",
+                        "on-secondary": "#2f3038",
+                        "on-background": "#e5e2e1",
+                        "secondary-fixed-dim": "#c6c5cf"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "240px",
+                        "margin-sm": "8px",
+                        "gutter": "12px",
+                        "margin-md": "16px",
+                        "unit": "4px",
+                        "panel-header-height": "36px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Geist"],
+                        "code-sm": ["JetBrains Mono"],
+                        "display": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "code-md": ["JetBrains Mono"],
+                        "headline": ["Geist"],
+                        "label-caps": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "code-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "display": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "code-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #09090B; color: #e5e2e1; }
+        .border-panel { border-color: #27272A; } /* zinc-800 */
+        .bg-level-1 { background-color: #18181B; }
+        .bg-level-2 { background-color: #27272A; }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden font-body-sm text-sm antialiased">
+<!-- SideNavBar -->
+<nav class="bg-surface-container-low dark:bg-surface-container-low text-primary dark:text-primary font-label-caps text-label-caps docked h-full left-0 w-sidebar-width border-r border-panel flat no shadows transition-all duration-150 flex flex-col h-full py-margin-sm hidden md:flex z-10 shrink-0">
+<!-- Header -->
+<div class="px-margin-md mb-margin-md flex items-center gap-gutter">
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-panel object-cover shrink-0" data-alt="A striking minimalist profile avatar for a developer IDE. The avatar is a geometric abstract representation of a user, utilizing harsh angles and a strictly monochrome palette of deep black and pristine white. The style is modern brutalism, suitable for a dark-mode developer environment, evoking precision and control without any gradients or soft edges. The lighting is non-existent, relying entirely on stark contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx7vs3M2DOyMykrvGYeYE_-0q9l6gPReKe7XY9mKORqKCn4QDHcJjMW3Clz8ztqjrdQZNjdnjWsGzT12U4dbUeZCX7AVrDv8Jrkdci8UwyOKLwsWHOvD8wNF9Jsw-wGuCBeedm6t0W-QRNRaozCuY5xvNoR2q9sBqYWSZbK4zAPmWrm46QJ0DrmV_xhWcHWXF6shMR4fDKLXiwIS9WnBul5dGN9WV6D6Rv0OyRqqtxUN_KHbEclh6djEpVRfVFxUy9u8MEqTaZtG-L"/>
+<div>
+<div class="font-headline text-headline text-primary">Leeter IDE</div>
+<div class="text-on-surface-variant text-[10px] uppercase tracking-wider">Local Workspace</div>
+</div>
+</div>
+<!-- Main Nav -->
+<div class="flex flex-col gap-unit px-unit flex-1">
+<a class="flex items-center gap-gutter px-gutter py-unit text-on-surface-variant hover:bg-surface-container-high rounded transition-colors group" href="#">
+<span class="material-symbols-outlined text-[18px]">folder</span>
+<span>Files</span>
+</a>
+<a class="flex items-center gap-gutter px-gutter py-unit text-on-surface-variant hover:bg-surface-container-high rounded transition-colors group" href="#">
+<span class="material-symbols-outlined text-[18px]">search</span>
+<span>Search</span>
+</a>
+<a class="flex items-center gap-gutter px-gutter py-unit bg-surface-container-highest border-l-2 border-primary text-primary rounded-r transition-colors group" href="#">
+<span class="material-symbols-outlined text-[18px]">bug_report</span>
+<span>Debug</span>
+</a>
+<a class="flex items-center gap-gutter px-gutter py-unit text-on-surface-variant hover:bg-surface-container-high rounded transition-colors group" href="#">
+<span class="material-symbols-outlined text-[18px]">checklist</span>
+<span>Tests</span>
+</a>
+</div>
+<!-- Footer Nav -->
+<div class="flex flex-col gap-unit px-unit mt-auto pt-margin-sm border-t border-panel">
+<a class="flex items-center gap-gutter px-gutter py-unit text-on-surface-variant hover:bg-surface-container-high rounded transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-gutter px-gutter py-unit text-on-surface-variant hover:bg-surface-container-high rounded transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span>Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full bg-[#09090B] overflow-hidden">
+<!-- Header -->
+<header class="h-panel-header-height flex items-center justify-between px-margin-sm border-b border-panel shrink-0 bg-level-1">
+<h1 class="font-headline text-[16px] font-semibold text-primary">Analytics</h1>
+<div class="flex items-center gap-margin-sm">
+<div class="flex items-center bg-[#09090B] border border-panel rounded-sm px-2 py-0.5">
+<span class="text-xs text-on-surface-variant mr-2">Range:</span>
+<select class="bg-transparent text-primary text-xs font-code-sm border-none p-0 focus:ring-0 cursor-pointer appearance-none">
+<option class="bg-level-1">Last 30 Days</option>
+<option class="bg-level-1">Last 7 Days</option>
+<option class="bg-level-1">All Time</option>
+</select>
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant ml-1 pointer-events-none">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 content-start">
+<!-- Top Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Stat Card 1 -->
+<div class="bg-level-1 border border-panel p-3 flex flex-col justify-between h-[80px]">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Total Solved</span>
+<span class="material-symbols-outlined text-[16px] text-primary">task_alt</span>
+</div>
+<div class="flex items-baseline gap-2">
+<div class="font-code-md text-2xl text-primary font-semibold leading-none">142</div>
+<div class="text-xs text-on-surface-variant font-code-sm"><span class="text-emerald-500 font-code-sm">+12</span>/wk</div>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-level-1 border border-panel p-3 flex flex-col justify-between h-[80px]">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Current Streak</span>
+<span class="material-symbols-outlined text-[16px] text-primary">local_fire_department</span>
+</div>
+<div class="flex items-baseline gap-2">
+<div class="font-code-md text-2xl text-primary font-semibold leading-none">12<span class="text-sm font-body-sm text-on-surface-variant ml-1">d</span></div>
+<div class="text-xs text-on-surface-variant font-code-sm">Best: <span class="font-code-sm">45</span></div>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-level-1 border border-panel p-3 flex flex-col justify-between h-[80px]">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Avg. Exec</span>
+<span class="material-symbols-outlined text-[16px] text-primary">speed</span>
+</div>
+<div class="flex items-baseline gap-2">
+<div class="font-code-md text-2xl text-primary font-semibold leading-none">4<span class="text-sm font-body-sm text-on-surface-variant ml-1">ms</span></div>
+<div class="text-xs text-on-surface-variant font-code-sm"><span class="text-rose-500 font-code-sm">-1.2ms</span> var</div>
+</div>
+</div>
+</div>
+<!-- Difficulty Breakdown & Activity Map -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+<!-- Difficulty Panel -->
+<div class="lg:col-span-1 bg-level-1 border border-panel flex flex-col">
+<div class="px-3 py-2 border-b border-panel">
+<h2 class="text-sm font-semibold text-primary">Breakdown</h2>
+</div>
+<div class="flex flex-col gap-3 p-3">
+<!-- Easy -->
+<div>
+<div class="flex justify-between items-end mb-1">
+<span class="text-xs text-primary">Easy</span>
+<span class="font-code-sm text-xs text-on-surface-variant">45/100</span>
+</div>
+<div class="w-full h-1 bg-level-2">
+<div class="h-full bg-emerald-500" style="width: 45%"></div>
+</div>
+</div>
+<!-- Medium -->
+<div>
+<div class="flex justify-between items-end mb-1">
+<span class="text-xs text-primary">Medium</span>
+<span class="font-code-sm text-xs text-on-surface-variant">72/150</span>
+</div>
+<div class="w-full h-1 bg-level-2">
+<div class="h-full bg-amber-500" style="width: 48%"></div>
+</div>
+</div>
+<!-- Hard -->
+<div>
+<div class="flex justify-between items-end mb-1">
+<span class="text-xs text-primary">Hard</span>
+<span class="font-code-sm text-xs text-on-surface-variant">25/50</span>
+</div>
+<div class="w-full h-1 bg-level-2">
+<div class="h-full bg-rose-500" style="width: 50%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Submissions List -->
+<div class="lg:col-span-2 bg-level-1 border border-panel flex flex-col">
+<div class="px-3 py-2 border-b border-panel flex justify-between items-center bg-level-2">
+<h2 class="text-sm font-semibold text-primary">Recent Submissions</h2>
+<a class="text-xs text-on-surface-variant hover:text-primary underline decoration-panel underline-offset-2" href="#">View All</a>
+</div>
+<div class="flex-1 overflow-x-auto">
+<table class="w-full text-left text-sm border-collapse whitespace-nowrap">
+<thead>
+<tr class="border-b border-panel text-xs text-on-surface-variant bg-level-1">
+<th class="py-1 px-3 font-normal w-1/2">Problem</th>
+<th class="py-1 px-3 font-normal">Status</th>
+<th class="py-1 px-3 font-normal">Runtime</th>
+<th class="py-1 px-3 font-normal text-right">Time</th>
+</tr>
+</thead>
+<tbody class="text-primary text-xs">
+<tr class="border-b border-panel hover:bg-level-2 transition-colors cursor-pointer group">
+<td class="py-1.5 px-3 group-hover:text-primary text-on-surface-variant">Two Sum</td>
+<td class="py-1.5 px-3 text-emerald-500">Accepted</td>
+<td class="py-1.5 px-3 font-code-sm">2ms</td>
+<td class="py-1.5 px-3 text-right text-on-surface-variant font-code-sm">10m ago</td>
+</tr>
+<tr class="border-b border-panel hover:bg-level-2 transition-colors cursor-pointer group">
+<td class="py-1.5 px-3 group-hover:text-primary text-on-surface-variant">Valid Parentheses</td>
+<td class="py-1.5 px-3 text-rose-500">Wrong Answer</td>
+<td class="py-1.5 px-3 font-code-sm">N/A</td>
+<td class="py-1.5 px-3 text-right text-on-surface-variant font-code-sm">2h ago</td>
+</tr>
+<tr class="border-b border-panel hover:bg-level-2 transition-colors cursor-pointer group">
+<td class="py-1.5 px-3 group-hover:text-primary text-on-surface-variant">Merge K Sorted Lists</td>
+<td class="py-1.5 px-3 text-emerald-500">Accepted</td>
+<td class="py-1.5 px-3 font-code-sm">14ms</td>
+<td class="py-1.5 px-3 text-right text-on-surface-variant font-code-sm">1d ago</td>
+</tr>
+<tr class="hover:bg-level-2 transition-colors cursor-pointer group">
+<td class="py-1.5 px-3 group-hover:text-primary text-on-surface-variant">Trapping Rain Water</td>
+<td class="py-1.5 px-3 text-amber-500">Time Limit Exceeded</td>
+<td class="py-1.5 px-3 font-code-sm">&gt;1000ms</td>
+<td class="py-1.5 px-3 text-right text-on-surface-variant font-code-sm">2d ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

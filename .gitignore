@@ -39,6 +39,10 @@ venv.bak/
 *.dylib
 *.so
 *.dll
+*.dSYM/
+test.cpp
+node_modules/
+dist/
 
 # OS generated files
 .DS_Store

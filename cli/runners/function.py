@@ -35,7 +35,7 @@ class FunctionRunner:
         lines.append(f'#include "{include_path}/lc.h"')
         if mode == "bench":
             lines.append('#include <chrono>')
-        lines.append(f'#include "../{solution_file}"')
+        lines.append(f'#include "{solution_file}"')
         lines.append('')
         lines.append('int main() {')
         

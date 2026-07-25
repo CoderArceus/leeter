@@ -5,6 +5,8 @@
 #include <queue>
 #include <set>
 #include <map>
+#include <unordered_map>
+#include <unordered_set>
 #include "tree.h"
 #include "list.h"
 
@@ -84,6 +86,38 @@ struct Printer<std::set<T>> {
 template<typename K, typename V>
 struct Printer<std::map<K, V>> {
     static void print(const std::map<K, V>& value) {
+        std::cout << "[";
+        bool first = true;
+        for (const auto& kv : value) {
+            if (!first) std::cout << ",";
+            std::cout << "[";
+            print_inline(kv.first);
+            std::cout << ",";
+            print_inline(kv.second);
+            std::cout << "]";
+            first = false;
+        }
+        std::cout << "]";
+    }
+};
+
+template<typename T, typename Hash, typename Eq, typename Alloc>
+struct Printer<std::unordered_set<T, Hash, Eq, Alloc>> {
+    static void print(const std::unordered_set<T, Hash, Eq, Alloc>& value) {
+        std::cout << "[";
+        bool first = true;
+        for (const auto& v : value) {
+            if (!first) std::cout << ",";
+            print_inline(v);
+            first = false;
+        }
+        std::cout << "]";
+    }
+};
+
+template<typename K, typename V, typename Hash, typename Eq, typename Alloc>
+struct Printer<std::unordered_map<K, V, Hash, Eq, Alloc>> {
+    static void print(const std::unordered_map<K, V, Hash, Eq, Alloc>& value) {
         std::cout << "[";
         bool first = true;
         for (const auto& kv : value) {
