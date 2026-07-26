@@ -28,11 +28,49 @@ def read_workspace_files(problem_dir: str) -> dict:
         files["input.txt"] = ""
         
     if os.path.exists(brute_path):
-        with open(brute_path, 'r') as f:
+        with open(brute_path, 'r', encoding='utf-8', errors='replace') as f:
             files["brute.cpp"] = f.read()
     else:
         files["brute.cpp"] = "// Naive brute force solution for stress testing\n#include \"lc.h\"\n\nclass BruteSolution {\npublic:\n    // Add your brute force implementation here\n};\n"
         
+    stmt_path = os.path.join(problem_dir, "problem_statement.txt")
+    if os.path.exists(stmt_path):
+        with open(stmt_path, 'r', encoding='utf-8', errors='replace') as f:
+            files["problem_statement.txt"] = f.read()
+    else:
+        readme_path = os.path.join(problem_dir, "README.md")
+        if os.path.exists(readme_path):
+            with open(readme_path, 'r', encoding='utf-8', errors='replace') as f:
+                raw_readme = f.read()
+            import re
+            text = re.sub(r'<code[^>]*>(.*?)</code>', r'`\1`', raw_readme, flags=re.DOTALL | re.IGNORECASE)
+            text = re.sub(r'<pre[^>]*>(.*?)</pre>', r'\n\n\1\n\n', text, flags=re.DOTALL | re.IGNORECASE)
+            text = re.sub(r'<li[^>]*>', r'\n  - ', text, flags=re.IGNORECASE)
+            text = re.sub(r'<p[^>]*>', r'\n\n', text, flags=re.IGNORECASE)
+            text = re.sub(r'<[^>]+>', '', text)
+            text = text.replace('&nbsp;', ' ').replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&').replace('&quot;', '"').replace('&#39;', "'")
+            text = re.sub(r'\n{3,}', '\n\n', text).strip()
+            files["problem_statement.txt"] = text
+            try:
+                with open(stmt_path, 'w', encoding='utf-8') as f:
+                    f.write(files["problem_statement.txt"])
+            except Exception:
+                pass
+        else:
+            files["problem_statement.txt"] = "Problem statement not available."
+
+    expected_path = os.path.join(problem_dir, "expected.txt")
+    if os.path.exists(expected_path):
+        with open(expected_path, 'r', encoding='utf-8', errors='replace') as f:
+            files["expected.txt"] = f.read()
+    else:
+        try:
+            from leeter_core.build import extract_expected_outputs
+            exp_list = extract_expected_outputs(problem_dir)
+            files["expected.txt"] = "\n\n".join(exp_list)
+        except Exception:
+            files["expected.txt"] = ""
+
     return files
 
 from typing import List
@@ -101,6 +139,48 @@ async def list_problems() -> List[str]:
             
     return sorted(problems)
 
+class DeleteRequest(BaseModel):
+    problem_dir: str
+
+@router.post("/delete")
+async def delete_problem(req: DeleteRequest):
+    """Deletes a specific problem folder."""
+    import shutil
+    problem_dir = os.path.abspath(req.problem_dir)
+    if os.path.exists(problem_dir) and "problems" in problem_dir:
+        shutil.rmtree(problem_dir, ignore_errors=True)
+    
+    problems_dir = os.path.abspath("problems")
+    remaining = [d for d in os.listdir(problems_dir) if os.path.isdir(os.path.join(problems_dir, d))] if os.path.exists(problems_dir) else []
+    if not remaining:
+        try:
+            from leeter_core.fetch import fetch_question_data
+            from cli.scaffold import scaffold_problem
+            data = fetch_question_data("two-sum")
+            scaffold_problem(data, force=False)
+        except Exception:
+            pass
+    return {"status": "success"}
+
+@router.post("/reset")
+async def reset_problems():
+    """Deletes all downloaded problems and resets workspace."""
+    import shutil
+    problems_dir = os.path.abspath("problems")
+    if os.path.exists(problems_dir):
+        for d in os.listdir(problems_dir):
+            path = os.path.join(problems_dir, d)
+            if os.path.isdir(path):
+                shutil.rmtree(path, ignore_errors=True)
+    try:
+        from leeter_core.fetch import fetch_question_data
+        from cli.scaffold import scaffold_problem
+        data = fetch_question_data("two-sum")
+        scaffold_problem(data, force=False)
+    except Exception:
+        pass
+    return {"status": "success"}
+
 @router.get("/testcase")
 async def get_testcase(problem_dir: str) -> str:
     """Returns the string contents of input.txt."""
@@ -126,6 +206,21 @@ async def save_testcase(req: SaveRequest):
         
     return {"status": "success"}
 
+@router.post("/expected/save")
+async def save_expected(req: SaveRequest):
+    """Saves the provided content to expected.txt in the specified problem directory."""
+    problem_dir = os.path.abspath(req.problem_dir)
+    expected_path = os.path.join(problem_dir, "expected.txt")
+    
+    if not os.path.exists(problem_dir):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Problem directory not found")
+        
+    with open(expected_path, "w") as f:
+        f.write(req.content)
+        
+    return {"status": "success"}
+
 @router.get("/brute")
 async def get_brute(problem_dir: str) -> str:
     """Returns the string contents of brute.cpp. Returns a template if it doesn't exist."""
@@ -146,7 +241,22 @@ async def save_brute(req: SaveRequest):
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Problem directory not found")
         
-    with open(brute_path, "w") as f:
+    with open(brute_path, "w", encoding="utf-8") as f:
+        f.write(req.content)
+        
+    return {"status": "success"}
+
+@router.post("/problem_statement/save")
+async def save_problem_statement(req: SaveRequest):
+    """Saves the provided content to problem_statement.txt in the specified problem directory."""
+    problem_dir = os.path.abspath(req.problem_dir)
+    stmt_path = os.path.join(problem_dir, "problem_statement.txt")
+    
+    if not os.path.exists(problem_dir):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Problem directory not found")
+        
+    with open(stmt_path, "w", encoding="utf-8") as f:
         f.write(req.content)
         
     return {"status": "success"}
@@ -170,9 +280,8 @@ async def workspace_events(request: Request, problem_dir: str):
             def on_modified(self, event):
                 if event.is_directory:
                     return
-                # We only care about solution.cpp, input.txt, and brute.cpp
-                if event.src_path.endswith("solution.cpp") or event.src_path.endswith("input.txt") or event.src_path.endswith("brute.cpp"):
-                    # Fire-and-forget an event into the asyncio loop
+                # We care about solution.cpp, input.txt, expected.txt, brute.cpp, and problem_statement.txt
+                if event.src_path.endswith("solution.cpp") or event.src_path.endswith("input.txt") or event.src_path.endswith("expected.txt") or event.src_path.endswith("brute.cpp") or event.src_path.endswith("problem_statement.txt"):
                     try:
                         loop = asyncio.get_event_loop()
                         loop.call_soon_threadsafe(q.put_nowait, True)

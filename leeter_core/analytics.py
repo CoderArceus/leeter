@@ -56,6 +56,8 @@ class StatsSummary:
     total_solved: int = 0
     total_problems: int = 0
     avg_benchmark_ns: Optional[float] = None
+    streak_days: int = 0
+    recent_solves: list = field(default_factory=list)
 
 
 @dataclass
@@ -134,6 +136,10 @@ def get_stats_summary(
 
     avg_ns = (sum(benchmarks) / len(benchmarks)) if benchmarks else None
 
+    session = load_session()
+    streak = session.get("streak", 0)
+    recent = session.get("recent_solves", [])
+
     return StatsSummary(
         easy=DifficultyCount(solved=solved["Easy"], total=total["Easy"]),
         medium=DifficultyCount(solved=solved["Medium"], total=total["Medium"]),
@@ -141,7 +147,10 @@ def get_stats_summary(
         total_solved=sum(solved.values()),
         total_problems=sum(total.values()),
         avg_benchmark_ns=avg_ns,
+        streak_days=streak,
+        recent_solves=recent,
     )
+
 
 
 # ── Search ───────────────────────────────────────────────────────────────
@@ -263,6 +272,49 @@ def mark_problem_solved(problem_dir: str) -> None:
 
     with open(problem_file, "w") as f:
         json.dump(problem_data, f, indent=2)
+
+
+def record_submission(problem_dir: str, status: str = "Accepted", run_ms: float = 0.0) -> None:
+    """Log a problem submission into session history and mark solved if accepted."""
+    problem_file = os.path.join(problem_dir, "problem.json")
+    title = os.path.basename(problem_dir)
+    slug = title
+    pid = None
+    if os.path.exists(problem_file):
+        try:
+            with open(problem_file, "r") as f:
+                pdata = json.load(f)
+                title = pdata.get("title", title)
+                slug = pdata.get("slug", title)
+                pid = pdata.get("id", pid)
+        except Exception:
+            pass
+
+    session = load_session()
+    if status == "Accepted":
+        session = update_streak(session)
+        if os.path.exists(problem_file):
+            try:
+                with open(problem_file, "r") as f:
+                    problem_data = json.load(f)
+                problem_data["solved"] = True
+                with open(problem_file, "w") as f:
+                    json.dump(problem_data, f, indent=2)
+            except Exception:
+                pass
+
+    solve_entry = {
+        "id": pid,
+        "slug": slug,
+        "title": title,
+        "status": status,
+        "run_ms": round(run_ms, 2),
+        "date": datetime.now().isoformat(),
+    }
+    recent = session.get("recent_solves", [])
+    recent.insert(0, solve_entry)
+    session["recent_solves"] = recent[:50]  # keep last 50
+    save_session(session)
 
 
 def set_last_accessed_problem(problem_dir: str) -> None:

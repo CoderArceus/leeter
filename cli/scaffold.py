@@ -132,4 +132,32 @@ def scaffold_problem(data, force=False):
     with open(readme_path, 'w') as f:
         f.write(readme_content + notes_section)
         
+    # 6. Write problem_statement.txt
+    stmt_path = os.path.join(folder_path, "problem_statement.txt")
+    if not os.path.exists(stmt_path) or force:
+        clean_text = content
+        clean_text = re.sub(r'<code[^>]*>(.*?)</code>', r'`\1`', clean_text, flags=re.DOTALL | re.IGNORECASE)
+        clean_text = re.sub(r'<pre[^>]*>(.*?)</pre>', r'\n\n\1\n\n', clean_text, flags=re.DOTALL | re.IGNORECASE)
+        clean_text = re.sub(r'<li[^>]*>', r'\n  - ', clean_text, flags=re.IGNORECASE)
+        clean_text = re.sub(r'<p[^>]*>', r'\n\n', clean_text, flags=re.IGNORECASE)
+        clean_text = re.sub(r'<[^>]+>', '', clean_text)
+        clean_text = clean_text.replace('&nbsp;', ' ').replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&').replace('&quot;', '"').replace('&#39;', "'")
+        clean_text = re.sub(r'\n{3,}', '\n\n', clean_text).strip()
+
+        stmt_content = f"{frontend_id}. {title}\n"
+        stmt_content += f"Difficulty: {difficulty}\n"
+        stmt_content += f"URL: {url}\n\n"
+        stmt_content += f"{clean_text}\n"
+        with open(stmt_path, 'w', encoding='utf-8') as f:
+            f.write(stmt_content)
+
+    # 7. Write expected.txt (idempotent)
+    expected_path = os.path.join(folder_path, "expected.txt")
+    if not os.path.exists(expected_path) or force:
+        try:
+            from leeter_core.build import extract_expected_outputs
+            extract_expected_outputs(folder_path)
+        except Exception:
+            pass
+
     return folder_path

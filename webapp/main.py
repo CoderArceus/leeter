@@ -2,12 +2,11 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from webapp.routers import run, bench, stress, analytics, trace, workspace
+from webapp.routers import run, trace, workspace
 from leeter_core.exceptions import (
     ProblemNotFoundError, FileNotFoundInProblemError,
     UnsupportedRunnerError, CompilationError,
-    BenchmarkExecutionError, RuntimeError_,
-    TimeLimitExceeded, StressMismatchError
+    RuntimeError_, TimeLimitExceeded
 )
 
 app = FastAPI(title="Leeter API")
@@ -35,7 +34,6 @@ async def bad_request_handler(request: Request, exc: UnsupportedRunnerError):
 async def compilation_error_handler(request: Request, exc: CompilationError):
     return JSONResponse(status_code=500, content={"detail": str(exc), "stderr": exc.stderr})
 
-@app.exception_handler(BenchmarkExecutionError)
 @app.exception_handler(RuntimeError_)
 async def execution_error_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"detail": str(exc), "raw_output": exc.raw_output})
@@ -44,24 +42,8 @@ async def execution_error_handler(request: Request, exc: Exception):
 async def timeout_handler(request: Request, exc: TimeLimitExceeded):
     return JSONResponse(status_code=408, content={"detail": str(exc), "timeout_sec": exc.timeout_sec})
 
-@app.exception_handler(StressMismatchError)
-async def stress_mismatch_handler(request: Request, exc: StressMismatchError):
-    return JSONResponse(status_code=200, content={
-        "status": "fail",
-        "payload": {
-            "found_at_iteration": exc.iteration,
-            "seed": exc.seed,
-            "input": exc.input_data,
-            "solution_output": exc.solution_output,
-            "brute_output": exc.brute_output
-        }
-    })
-
 # Mount Routers
 app.include_router(run.router, prefix="/api/run", tags=["run"])
-app.include_router(bench.router, prefix="/api/bench", tags=["bench"])
-app.include_router(stress.router, prefix="/api/stress", tags=["stress"])
-app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
 app.include_router(trace.router, prefix="/api/trace", tags=["trace"])
 app.include_router(workspace.router, prefix="/api/workspace", tags=["workspace"])
 

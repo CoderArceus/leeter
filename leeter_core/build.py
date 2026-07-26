@@ -47,6 +47,7 @@ class CaseResult:
     index: int
     status: str
     got: str
+    expected: Optional[str] = None
 
 
 @dataclass
@@ -150,6 +151,68 @@ def compile_debug(problem_dir: str, build_dir: str, sanitize: bool = True) -> Co
 
 # ── Execution ────────────────────────────────────────────────────────────
 
+def _normalize_val(val: str) -> str:
+    s = "".join(val.split()).lower()
+    if s in ("1", "true", "true()"):
+        return "true"
+    if s in ("0", "false", "false()"):
+        return "false"
+    return s
+
+
+def extract_expected_outputs(problem_dir: str) -> List[str]:
+    import re
+    expected_path = os.path.join(problem_dir, "expected.txt")
+    if os.path.exists(expected_path):
+        with open(expected_path, "r", encoding="utf-8", errors="replace") as f:
+            raw = f.read()
+        lines = [line.strip() for line in raw.strip().split("\n") if line.strip()]
+        return lines
+
+    source_text = ""
+    stmt_path = os.path.join(problem_dir, "problem_statement.txt")
+    readme_path = os.path.join(problem_dir, "README.md")
+    if os.path.exists(stmt_path):
+        with open(stmt_path, "r", encoding="utf-8", errors="replace") as f:
+            source_text = f.read()
+    elif os.path.exists(readme_path):
+        with open(readme_path, "r", encoding="utf-8", errors="replace") as f:
+            source_text = f.read()
+
+    if not source_text:
+        return []
+
+    lines = source_text.split("\n")
+    expected = []
+    for i, line in enumerate(lines):
+        clean_line = re.sub(r"<[^>]+>", "", line)
+        clean_line = re.sub(r"[*`~_]", "", clean_line).strip()
+        if re.search(r"\bOutput\s*:", clean_line, re.IGNORECASE):
+            parts = re.split(
+                r"\bOutput\s*:", clean_line, flags=re.IGNORECASE, maxsplit=1
+            )
+            val = parts[1].strip() if len(parts) > 1 else ""
+            if not val and i + 1 < len(lines):
+                next_line = re.sub(r"<[^>]+>", "", lines[i + 1])
+                next_line = re.sub(r"[*`~_]", "", next_line).strip()
+                if next_line and not re.search(
+                    r"\b(Explanation|Input|Example)\b", next_line, re.IGNORECASE
+                ):
+                    val = next_line
+            if "Explanation:" in val:
+                val = val.split("Explanation:")[0].strip()
+            if val:
+                expected.append(val)
+
+    try:
+        with open(expected_path, "w", encoding="utf-8") as f:
+            f.write("\n\n".join(expected) + ("\n" if expected else ""))
+    except Exception:
+        pass
+
+    return expected
+
+
 def execute_with_timeout(
     problem_dir: str,
     build_dir: str,
@@ -191,19 +254,32 @@ def execute_with_timeout(
                 else 0
             )
 
+            expected_outputs = extract_expected_outputs(problem_dir)
             cases: List[CaseResult] = []
             out_lines = (
                 result.stdout.strip().split("\n") if result.stdout else []
             )
-            for idx, line in enumerate(out_lines):
-                if not line.strip():
-                    continue
-                cases.append(CaseResult(index=idx, status="pass", got=line.strip()))
+            out_lines = [line.strip() for line in out_lines if line.strip()]
+
+            passed_cnt = 0
+            failed_cnt = 0
+
+            for idx, got_val in enumerate(out_lines):
+                if idx < len(expected_outputs) and expected_outputs[idx].strip():
+                    exp_val = expected_outputs[idx].strip()
+                    if _normalize_val(got_val) == _normalize_val(exp_val):
+                        cases.append(CaseResult(index=idx, status="pass", got=got_val, expected=exp_val))
+                        passed_cnt += 1
+                    else:
+                        cases.append(CaseResult(index=idx, status="fail", got=got_val, expected=exp_val))
+                        failed_cnt += 1
+                else:
+                    cases.append(CaseResult(index=idx, status="unverified", got=got_val, expected=None))
 
             return RunResult(
                 cases=cases,
-                passed=len(cases),
-                failed=0,
+                passed=passed_cnt,
+                failed=failed_cnt,
                 total=len(cases),
                 run_ms=round(run_ms, 2),
                 binary_kb=round(size_kb, 2),
